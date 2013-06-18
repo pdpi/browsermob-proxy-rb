@@ -23,6 +23,7 @@ module BrowserMob
         @resource = resource
         @host = host
         @port = port
+        @hosts = {}
       end
 
       #
@@ -78,6 +79,21 @@ module BrowserMob
       def blacklist(regexp, status_code)
         regex = Regexp === regexp ? regexp.source : regexp.to_s
         @resource['blacklist'].put :regex => regex, :status => status_code
+      end
+
+      def rewrite(regexp, replace)
+        regex = Regexp === regexp ? regexp.source : regexp.to_s
+        @resource['rewrite'].put :matchRegex => regex, :replace => replace
+      end
+
+      def add_host(host, ip)
+        @hosts[host] = ip
+        @resource['hosts'].post @hosts.to_json, :content_type => "application/json"
+      end
+
+      def remove_host(host)
+        @hosts.delete host
+        @resource['hosts'].post @hosts.to_json, :content_type => "application/json"
       end
 
       def header(hash)

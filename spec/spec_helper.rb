@@ -45,6 +45,8 @@ module BrowserMob
       end
 
       class HttpServer
+        attr_reader :port
+
         def initialize(app)
           @port = Selenium::WebDriver::PortProber.above(3000)
 

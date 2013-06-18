@@ -14,7 +14,9 @@ module BrowserMob
           "whitelist"   => mock("resource[whitelist]"),
           "blacklist"   => mock("resource[blacklist]"),
           "limit"       => mock("resource[limit]"),
-          "headers"     => mock("resource[headers]")
+          "headers"     => mock("resource[headers]"),
+          "hosts"       => mock("rescource[hosts]"),
+          "rewrite"     => mock("resource[rewrite]")
         }.each do |path, mock|
           resource.stub!(:[]).with(path).and_return(mock)
         end
@@ -88,6 +90,27 @@ module BrowserMob
         client.whitelist(%r[http://example.com], 401)
       end
 
+      it "sets the hosts list when adding new hosts" do
+        resource['hosts'].should_receive(:post).
+                          with('{"www.example.com":"127.0.0.1"}',
+                              :content_type => "application/json")
+
+        client.add_host('www.example.com', '127.0.0.1')
+      end
+
+      it "sets the hosts list when deleting hosts" do
+        resource['hosts'].should_receive(:post)
+        client.add_host('www.example.com', '127.0.0.1')
+        resource['hosts'].should_receive(:post)
+        client.add_host('subdomain.example.com', '192.168.1.1')
+
+        resource['hosts'].should_receive(:post).
+                          with('{"subdomain.example.com":"192.168.1.1"}',
+                              :content_type => "application/json")
+
+        client.remove_host('www.example.com')
+      end
+
       it "sets the :downstream_kbps limit" do
         resource['limit'].should_receive(:put).
                           with('downstreamKbps' => 100)
@@ -125,6 +148,12 @@ module BrowserMob
         resource['headers'].should_receive(:post).with('{"foo":"bar"}', :content_type => "application/json")
 
         client.headers(:foo => "bar")
+      end
+
+      it "rewrites URLs" do
+        resource['rewrite'].should_receive(:put).with(:matchRegex => "foo.*", :replace => "bar")
+
+        client.rewrite(/foo.*/, "bar")
       end
 
       context "#selenium_proxy" do

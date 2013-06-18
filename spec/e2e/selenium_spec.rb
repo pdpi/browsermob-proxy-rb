@@ -53,4 +53,20 @@ describe "Proxy + WebDriver" do
     proxy.limit(:downstream_kbps => 100, :upstream_kbps => 100, :latency => 2)
   end
 
+  it "should replace domain name lookups" do
+    proxy.add_host('www.example.com', '0.0.0.0')
+    port = BrowserMob::Proxy::SpecHelper.httpd.port
+    driver.get "www.example.com:#{port}/1.html"
+    p driver.find_element(:xpath => '//body').text
+    driver.find_element(:id,"header").text.should == "BrowserMob-Proxy test page"
+  end
+
+  it "should replace domain name lookups" do
+    proxy.rewrite(/(.*)\/1.html/, "$1/2.html")
+    port = BrowserMob::Proxy::SpecHelper.httpd.port
+    driver.get url_for("1.html")
+    p driver.find_element(:xpath => '//body').text
+    driver.find_element(:id,"header").text.should == "A second test"
+  end
+
 end
