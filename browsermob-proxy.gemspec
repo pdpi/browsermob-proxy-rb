@@ -3,12 +3,12 @@ $:.push File.expand_path("../lib", __FILE__)
 require "browsermob/proxy/version"
 
 Gem::Specification.new do |s|
-  s.name        = "browsermob-proxy"
+  s.name        = "browsermob-proxy2"
   s.version     = BrowserMob::Proxy::VERSION
   s.platform    = Gem::Platform::RUBY
-  s.authors     = ["jari.bakken"]
-  s.email       = ["jari.bakken@gmail.com"]
-  s.homepage    = "http://github.com/jarib/browsermob-proxy-rb"
+  s.authors     = ["Pedro Pinheiro", "jari.bakken"]
+  s.email       = ["pdpinheiro@gmail.com", "jari.bakken@gmail.com"]
+  s.homepage    = "http://github.com/pdpi/browsermob-proxy-rb"
   s.summary     = %q{Ruby client for the BrowserMob Proxy REST API}
   s.description = %q{Ruby client for the BrowserMob Proxy REST API}
 
